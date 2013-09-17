@@ -1,0 +1,23 @@
+apply plugin: 'android-library'
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile group: 'com.google.android.gms', name: 'play-services', version: '3.1.36'
+
+  compile fileTree(dir: 'libs', include: 'nineoldandroids-2.4.0.jar')
+}
+
+android {
+  compileSdkVersion 17
+  buildToolsVersion '17.0.0'
+
+  sourceSets {
+    main {
+      manifest.srcFile 'AndroidManifest.xml'
+      java.srcDirs = ['src']
+      res.srcDirs = ['res']
+    }
+  }
+}
