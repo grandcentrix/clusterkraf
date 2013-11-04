@@ -52,7 +52,6 @@ public class Clusterkraf {
     public Clusterkraf(GoogleMap map, Options options, ArrayList<InputPoint> points, GoogleMap.OnMapClickListener mapClickListener) {
         this.mapRef = new WeakReference<GoogleMap>(map);
         this.options = options;
-        this.mapClickListener = mapClickListener;
         this.innerCallbackListener = new InnerCallbackListener(this, mapClickListener);
         this.transitionsAnimation = new ClusterTransitionsAnimation(map, options, innerCallbackListener);
 
@@ -354,7 +353,7 @@ public class Clusterkraf {
             boolean handled = false;
             boolean exempt = false;
             Clusterkraf clusterkraf = clusterkrafRef.get();
-            if (clusterkraf != null) {
+            if (clusterkraf != null && clusterkraf.currentClusterPointsByMarker != null && marker != null) {
                 ClusterPoint clusterPoint = clusterkraf.currentClusterPointsByMarker.get(marker);
                 if (clusterPoint == null) {
                     if (clusterkraf.transitionsAnimation.getAnimatedDestinationClusterPoint(marker) != null) {
@@ -406,7 +405,7 @@ public class Clusterkraf {
         @Override
         public void onInfoWindowClick(Marker marker) {
             Clusterkraf clusterkraf = clusterkrafRef.get();
-            if (clusterkraf != null) {
+            if (clusterkraf != null && clusterkraf.currentClusterPointsByMarker != null && marker != null) {
                 boolean handled = false;
                 ClusterPoint clusterPoint = clusterkraf.currentClusterPointsByMarker.get(marker);
                 OnInfoWindowClickDownstreamListener downstreamListener = clusterkraf.options.getOnInfoWindowClickDownstreamListener();
@@ -450,7 +449,7 @@ public class Clusterkraf {
         public View getInfoWindow(Marker marker) {
             View infoWindow = null;
             Clusterkraf clusterkraf = clusterkrafRef.get();
-            if (clusterkraf != null) {
+            if (clusterkraf != null && clusterkraf.currentClusterPointsByMarker != null && marker != null) {
                 ClusterPoint clusterPoint = clusterkraf.currentClusterPointsByMarker.get(marker);
                 InfoWindowDownstreamAdapter infoWindowDownstreamAdapter = clusterkraf.options.getInfoWindowDownstreamAdapter();
                 if (infoWindowDownstreamAdapter != null) {
@@ -468,7 +467,7 @@ public class Clusterkraf {
         public View getInfoContents(Marker marker) {
             View infoWindow = null;
             Clusterkraf clusterkraf = clusterkrafRef.get();
-            if (clusterkraf != null) {
+            if (clusterkraf != null && clusterkraf.currentClusterPointsByMarker != null && marker != null) {
                 ClusterPoint clusterPoint = clusterkraf.currentClusterPointsByMarker.get(marker);
                 InfoWindowDownstreamAdapter infoWindowDownstreamAdapter = clusterkraf.options.getInfoWindowDownstreamAdapter();
                 if (infoWindowDownstreamAdapter != null) {
