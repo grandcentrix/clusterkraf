@@ -4,9 +4,9 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile group: 'com.google.android.gms', name: 'play-services', version: '4.+'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.google.android.gms:play-services:4.+'
 
-    compile fileTree(dir: 'libs', include: 'nineoldandroids-2.4.0.jar')
 }
 
 android {
