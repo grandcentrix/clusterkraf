@@ -1,11 +1,5 @@
 package com.twotoasters.clusterkraf;
 
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Handler;
-import android.view.View;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,8 +7,15 @@ import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Handler;
+import android.view.View;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -49,10 +50,10 @@ public class Clusterkraf {
      * @param map     The GoogleMap to be managed by Clusterkraf
      * @param options Customized options
      */
-    public Clusterkraf(GoogleMap map, Options options, ArrayList<InputPoint> points, GoogleMap.OnMapClickListener mapClickListener) {
+    public Clusterkraf(GoogleMap map, Options options, ArrayList<InputPoint> points, GoogleMap.OnMapClickListener mapClickListener, GoogleMap.OnCameraChangeListener onCameraChangeListener) {
         this.mapRef = new WeakReference<GoogleMap>(map);
         this.options = options;
-        this.innerCallbackListener = new InnerCallbackListener(this, mapClickListener);
+        this.innerCallbackListener = new InnerCallbackListener(this, mapClickListener, onCameraChangeListener);
         this.transitionsAnimation = new ClusterTransitionsAnimation(map, options, innerCallbackListener);
 
         if (points != null) {
@@ -269,10 +270,14 @@ public class Clusterkraf {
         private final WeakReference<Clusterkraf> clusterkrafRef;
 
         private final Handler handler = new Handler();
+
+        private final GoogleMap.OnCameraChangeListener onCameraChangeListener;
+
         private GoogleMap.OnMapClickListener mapClickListener;
 
-        private InnerCallbackListener(Clusterkraf clusterkraf, GoogleMap.OnMapClickListener mapClickListener) {
+        private InnerCallbackListener(Clusterkraf clusterkraf, GoogleMap.OnMapClickListener mapClickListener, GoogleMap.OnCameraChangeListener onCameraChangeListener) {
             this.mapClickListener = mapClickListener;
+            this.onCameraChangeListener = onCameraChangeListener;
             clusterkrafRef = new WeakReference<Clusterkraf>(clusterkraf);
             clusteringOnCameraChangeListener = new ClusteringOnCameraChangeListener(this, clusterkraf.options);
         }
@@ -280,7 +285,7 @@ public class Clusterkraf {
         private final ClusteringOnCameraChangeListener clusteringOnCameraChangeListener;
 
         @Override
-        public void onClusteringCameraChange() {
+        public void onClusteringCameraChange(CameraPosition cameraPosition) {
 
             Clusterkraf clusterkraf = clusterkrafRef.get();
             if (clusterkraf != null) {
@@ -294,6 +299,10 @@ public class Clusterkraf {
                 }
                 clusterkraf.transitionsAnimation.cancel();
                 clusterkraf.updateClustersAndTransition();
+            }
+
+            if(onCameraChangeListener != null){
+                onCameraChangeListener.onCameraChange(cameraPosition);
             }
 
 
